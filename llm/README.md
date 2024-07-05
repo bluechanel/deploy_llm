@@ -10,4 +10,4 @@
 4. **Modify the model path in docker compose**
 5. **Run with Docker Compose:** `docker compose up -d`
 
-More details available at: <https://www.wileyzhang.com/llm-model-deployment>
+More details available at: <https://www.wileyzhang.com/llm%E6%A8%A1%E5%9E%8B%E9%83%A8%E7%BD%B2>
