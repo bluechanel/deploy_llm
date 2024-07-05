@@ -1,0 +1,27 @@
+version: "3.9"
+
+x-common:
+  &common
+    # 将本地模型目录 映射到容器里面
+  volumes:
+    - /data/models:/models
+  environment:
+    &common-env
+    TZ: "Asia/Shanghai"
+
+services:
+  embedding-server:
+    <<: *common
+    image: ghcr.io/huggingface/text-embeddings-inference:1.4
+    restart: unless-stopped
+    ports:
+      - "1281:80"
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: all
+              capabilities: [gpu]
+    # model-path 参数修改为自己下载模型的路径
+    command: [ "--json-output", "--model-id", "/models/maple77/gte-large-zh", "--revision", "refs/pr/5" ]
