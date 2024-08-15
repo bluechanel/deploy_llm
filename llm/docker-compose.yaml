@@ -2,6 +2,10 @@ version: "3.9"
 
 x-common:
   &common
+  build:
+    context: .
+    dockerfile: Dockerfile # 如果使用带有工具能力的，修改为tool.Dockerfile
+  image: fschat:latest
   # 将本地模型目录 映射到容器里面
   volumes:
     - /data/models:/models
@@ -12,22 +16,13 @@ x-common:
 services:
   fastchat-controller:
     <<: *common
-    build:
-      context: .
-      dockerfile: api.Dockerfile
-    image: fastchat:latest
     restart: unless-stopped
     ports:
       - "21001:21001"
     entrypoint: [ "python3", "-m", "fastchat.serve.controller", "--host", "0.0.0.0", "--port", "21001" ]
   fastchat-model-worker:
     <<: *common
-    build:
-      context: .
-      dockerfile: model.Dockerfile
-      shm_size: '10.24gb'
     shm_size: '10.24gb'
-    image: fsmodel:latest
     restart: unless-stopped
     deploy:
       resources:
@@ -36,15 +31,11 @@ services:
             - driver: nvidia
               count: all
               capabilities: [gpu]
-    # model-path 参数修改为自己下载模型的路径
+    # model-path 参数修改为自己下载模型的路径， --num-gpus 为使用几张GPU，按实际修改
     entrypoint: [ "python3", "-m", "fastchat.serve.vllm_worker", "--model-names", "gpt-4", "--model-path", "/models/qwen/Qwen2-72B-Instruct-GPTQ-Int8", "--worker-address", "http://fastchat-model-worker:21002", "--controller-address", "http://fastchat-controller:21001", "--host", "0.0.0.0", "--port", "21002", "--num-gpus", "4" ]
   fastchat-api-server:
     <<: *common
-    build:
-      context: .
-      dockerfile: api.Dockerfile
-    image: fastchat:latest
     restart: unless-stopped
     ports:
       - "1282:8000"
-    entrypoint: [ "python3", "-m", "fastchat.serve.openai_api_server_for_tool", "--controller-address", "http://fastchat-controller:21001", "--host", "0.0.0.0", "--port", "8000" ]
+    entrypoint: [ "python3", "-m", "fastchat.serve.openai_api_server", "--controller-address", "http://fastchat-controller:21001", "--host", "0.0.0.0", "--port", "8000" ]
