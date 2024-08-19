@@ -4,7 +4,7 @@ x-common:
   &common
   build:
     context: .
-    dockerfile: Dockerfile # 如果使用带有工具能力的，修改为tool.Dockerfile
+    dockerfile: Dockerfile
   image: fschat:latest
   # 将本地模型目录 映射到容器里面
   volumes:
@@ -38,4 +38,4 @@ services:
     restart: unless-stopped
     ports:
       - "1282:8000"
-    entrypoint: [ "python3", "-m", "fastchat.serve.openai_api_server", "--controller-address", "http://fastchat-controller:21001", "--host", "0.0.0.0", "--port", "8000" ]
+    entrypoint: [ "python3", "-m", "fastchat.serve.openai_api_server_for_tool", "--controller-address", "http://fastchat-controller:21001", "--host", "0.0.0.0", "--port", "8000" ]
