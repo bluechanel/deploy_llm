@@ -12,10 +12,10 @@ x-common:
 services:
   embedding-server:
     <<: *common
-    image: ghcr.io/huggingface/text-embeddings-inference:1.4
+    image: ghcr.io/huggingface/text-embeddings-inference:1.5
     restart: unless-stopped
     ports:
-      - "1281:80"
+      - "1282:80"
     deploy:
       resources:
         reservations:
@@ -24,4 +24,19 @@ services:
               count: all
               capabilities: [gpu]
     # model-path 参数修改为自己下载模型的路径
-    command: [ "--json-output", "--model-id", "/models/maple77/gte-large-zh", "--revision", "refs/pr/5" ]
+    command: [ "--json-output", "--model-id", "/models/maple77/gte-large-zh"]
+  rerank-server:
+    <<: *common
+    image: ghcr.io/huggingface/text-embeddings-inference:1.5
+    restart: unless-stopped
+    ports:
+      - "1283:80"
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: all
+              capabilities: [ gpu ]
+    # model-path 参数修改为自己下载模型的路径
+    command: [ "--model-id", "/models/maple77/bge-reranker-base", "--revision", "refs/pr/5"]
