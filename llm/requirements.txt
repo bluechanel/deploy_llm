@@ -1,6 +1,0 @@
-vllm
-fschat[model_worker]
-einops
-transformers_stream_generator
-optimum
-auto-gptq
