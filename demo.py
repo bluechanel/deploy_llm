@@ -2,7 +2,7 @@ import os
 from openai import OpenAI
 import cohere
 
-base_url = "http://192.168.11.199:1282/v1"
+base_url = "http://127.0.0.1:8000/v1"
 
 def get_openai_client():
     return OpenAI(
@@ -36,7 +36,7 @@ def test_rerank():
     try:
         co_client = cohere.ClientV2(
             api_key=os.getenv("API_KEY", "sk-example"),
-            base_url=base_url.rstrip('/v1')  # 根据实际API路径调整
+            base_url=base_url.rstrip('/v1')
         )
         reranker = co_client.rerank(
             model='bge-reranker-base',
