@@ -62,7 +62,15 @@ services:
             - driver: nvidia
               capabilities: [ gpu ]
               device_ids: ['3']
-    command: [ "--model","/models/maple77/bge-reranker-base",  "--host", "0.0.0.0", "--port", "8000", "--task", "score", "--served-model-name", "bge-reranker-base"]
+    command: >
+      --model /models/Qwen3-Reranker-0.6
+      --host 0.0.0.0
+      --port 8005
+      --gpu-memory-utilization 0.2
+      --max-model-len 2048
+      --runner pooling
+      --hf_overrides '{"architectures": ["Qwen3ForSequenceClassification"],"classifier_from_token": ["no", "yes"],"is_original_qwen3_reranker": true}'
+      --chat-template examples/pooling/score/template/qwen3_reranker.jinja
 
 
 networks:
